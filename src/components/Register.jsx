@@ -6,13 +6,43 @@ export default function Register() {
   const [editingIndex, setEditingIndex] = useState(null); 
   const roles = ["Admin", "User", "guest"];
 
+  const [errors, setErrors] = useState({});
+
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     
   }
   console.log("PPPformdata--->",formData)
-  const handleSubmit = () => {
+
+  const isEmptyObject = (obj) => {
+    return Object.keys(obj).length === 0 && obj.constructor === Object;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const validationErrors = {};
+    if (!formData.name) {
+      validationErrors.name = 'Name is required';
+    }
+    if (!formData.email) {
+      validationErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      validationErrors.email = 'Invalid email address';
+    }
+    if (!formData.password) {
+      validationErrors.password = 'Password is required';
+    }
+
+    if (Object.keys(validationErrors).length === 0) {
+      
+      console.log('Form submitted: ---->', formData);
+    } else {
+     
+      setErrors(validationErrors);
+    }
+
     if (editingIndex !== null) {
       
       setTableList((prev) => {
@@ -21,12 +51,18 @@ export default function Register() {
         return newList;
       });
       setEditingIndex(null); 
-    } else {
-      
-      setTableList((prev) => [...prev, formData]);
+    }
+      else {
+      if(!isEmptyObject(formData)){
+        setTableList((prev) => [...prev, formData]);
+      }
     }
     setFormData({}); 
+    
+  //  validation Errrprrr
+
   };
+
 
   const handleEdit = (item,index) => {
     setFormData(item); 
@@ -50,10 +86,12 @@ export default function Register() {
           <input
             className="form-control"
             type="text"
+            
             name="firstName"
             value={formData?.firstName || ''}
             onChange={(e) =>handleChange(e)}
           />
+          {errors.name && <span>{errors.name}</span>}
         </div>
         <div>
           <label>Last Name:</label>
@@ -64,6 +102,7 @@ export default function Register() {
             value={formData?.lastName || ''}
             onChange={(e) =>handleChange(e)}
           />
+           {errors.name && <span>{errors.name}</span>}
         </div>
         <div>
           <label>Email:</label>
@@ -74,6 +113,7 @@ export default function Register() {
             value={formData?.email || ''}
             onChange={(e) =>handleChange(e)}
           />
+           {errors.email && <span>{errors.email}</span>}
         </div>
         <div>
           <label>Phone Number:</label>
@@ -84,6 +124,7 @@ export default function Register() {
             value={formData?.number || ''}
             onChange={(e) =>handleChange(e)}
           />
+          {errors.password && <span>{errors.password}</span>}
         </div>
         <div>
           <label>Password:</label>
@@ -96,7 +137,7 @@ export default function Register() {
           />
         </div>
         <div>
-          <label>Role:</label>
+          <label className="m-2">Role:</label>
           <select
             name="role"
             value={formData?.role || ''}
@@ -112,15 +153,15 @@ export default function Register() {
         </div>
        
         <button
-          className="btn btn-primary mt-5 w-100"
+          className="btn btn-primary mt-5 w-100 mb-5"
           onClick={handleSubmit}
           type="button"
         >
-          {editingIndex !== null ? "Update" : "Submit"} {/* Change button text based on edit mode */}
+          {editingIndex !== null ? "Update" : "Submit"} 
         </button>
       </form>
       {/* Table */}
-      <table className="table">
+      <table className="table mt-5">
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -130,7 +171,7 @@ export default function Register() {
             <th scope="col">Number</th>
             <th scope="col">passWord</th>
             <th scope="col">Role</th>
-            <th scope="col">Actions</th> {/* Add Actions column */}
+            <th scope="col">Actions</th> 
           </tr>
         </thead>
         <tbody>
@@ -144,7 +185,7 @@ export default function Register() {
               <td>{item.password}</td>
               <td>{item.role}</td>
               <td>
-                {/* Edit and Delete buttons */}
+                
                 <button className="btn btn-primary" onClick={() => handleEdit(item,index)}>Edit</button>
                 <button className="btn btn-danger" onClick={() => handleDelete(index)}>Delete</button>
               </td>
