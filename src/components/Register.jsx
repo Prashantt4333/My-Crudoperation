@@ -160,6 +160,7 @@ export default function Register() {
           {editingIndex !== null ? "Update" : "Submit"} 
         </button>
       </form>
+      
       {/* Table */}
       <table className="table mt-5">
         <thead>
